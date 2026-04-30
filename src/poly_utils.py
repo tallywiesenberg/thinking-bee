@@ -203,31 +203,39 @@ def get_price_series_from_slug(
 
 import requests
 
-def search_event_slugs(query, include_closed=False, limit=50):
-    url = "https://gamma-api.polymarket.com/public-search"
-    params = {
-        "q": query,
-        "limit": limit,
-    }
+import requests
 
-    resp = requests.get(url, params=params, timeout=20)
-    resp.raise_for_status()
-    data = resp.json()
+def get_event_slugs_paginated(keyword=None, pages=10, limit=100):
+    url = "https://gamma-api.polymarket.com/events"
+    results = []
 
-    rows = []
+    for page in range(pages):
+        params = {
+            "limit": limit,
+            "offset": page * limit,
+            "active": "true",
+            "closed": "false",
+            "order": "volume_24hr",
+            "ascending": "false",
+        }
 
-    for event in data.get("events", []):
-        if not include_closed:
-            if event.get("closed") or not event.get("active"):
-                continue
+        resp = requests.get(url, params=params, timeout=20)
+        resp.raise_for_status()
+        data = resp.json()
 
-        rows.append({
-            "slug": event.get("slug"),
-            "title": event.get("title"),
-            "active": event.get("active"),
-            "closed": event.get("closed"),
-            "volume": event.get("volume"),
-            "liquidity": event.get("liquidity"),
-        })
+        for event in data:
+            title = event.get("title", "")
+            slug = event.get("slug", "")
 
-    return rows
+            if keyword is None or keyword.lower() in title.lower():
+                results.append({
+                    "slug": slug,
+                    "title": title,
+                    "volume_24hr": event.get("volume24hr"),
+                    "volume": event.get("volume"),
+                    "liquidity": event.get("liquidity"),
+                    "active": event.get("active"),
+                    "closed": event.get("closed"),
+                })
+
+    return results
