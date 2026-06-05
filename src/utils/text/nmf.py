@@ -119,22 +119,3 @@ def get_nmf_topic_keywords(nmf, terms, topic_idx, top_n=15):
 
 def get_nmf_topic_strengths(nmf):
     return np.linalg.norm(nmf.components_, axis=1)
-
-def alpha_from_strength(strength, min_alpha=0.25, max_alpha=1.0):
-    """Map a topic strength to a matplotlib alpha value.
-
-    Scales strength linearly to the [min_alpha, max_alpha] range based on
-    the global strength_min and strength_max values.
-
-    Args:
-        strength (float): Topic strength to convert.
-        min_alpha (float): Minimum alpha for the weakest topic.
-        max_alpha (float): Maximum alpha for the strongest topic.
-
-    Returns:
-        float: Alpha value to use for plotting.
-    """
-    if strength_max == strength_min:
-        return max_alpha
-    scaled = (strength - strength_min) / (strength_max - strength_min)
-    return min_alpha + scaled * (max_alpha - min_alpha)

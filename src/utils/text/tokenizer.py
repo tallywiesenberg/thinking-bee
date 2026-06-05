@@ -1,6 +1,6 @@
 import spacy
-from utils.nlp import WIKI_STOP_WORDS
-from utils.nlp.cleaning import looks_like_username
+from utils.text import WIKI_STOP_WORDS
+from utils.text.cleaning import looks_like_username
 
 nlp = spacy.load("en_core_web_sm", disable=["parser"])
 
