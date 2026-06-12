@@ -48,6 +48,11 @@ def add_directional_targets(
             [1, -1],
             default=0,
         )
+        returns = out.groupby(market_col)[price_col].diff()
+
+        out[f"future_volatility_{h}h"] = returns.groupby(out[market_col]).transform(
+            lambda s: s.shift(-h + 1).rolling(h).std()
+        )
 
         # If future price is missing, target should also be missing
         out.loc[future_price.isna(), f"dir_fwd_{h}h"] = np.nan

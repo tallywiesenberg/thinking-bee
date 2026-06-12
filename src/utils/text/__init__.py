@@ -14,6 +14,8 @@ WIKI_STOP_WORDS = {
     "source",
     "editor",
     "page",
+    "request",
+    "archive",
     "discussion",
     "consensus",
     "citation",
