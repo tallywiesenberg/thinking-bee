@@ -37,6 +37,49 @@ def add_exp_lag_features(df, feature_cols, taus=(2, 12), L=24, time_col="timesta
     return df
 
 
+def add_time_lag_features(df, feature_cols=None, L=24, time_col="timestamp"):
+    """
+    Add simple lagged values for datetime or timedelta features.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe.
+    feature_cols : list or None
+        Column names to create lagged features for. If None, all time-based
+        columns are used.
+    L : int
+        Number of lag steps to create. Default is 24.
+    time_col : str
+        Name of the timestamp column. Default is "timestamp".
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with new lagged time-based feature columns appended.
+    """
+    df = df.sort_values(time_col).copy()
+    if feature_cols is None:
+        feature_cols = [
+            col
+            for col in df.columns
+            if np.issubdtype(df[col].dtype, np.datetime64)
+            or np.issubdtype(df[col].dtype, np.timedelta64)
+        ]
+    else:
+        feature_cols = [
+            col
+            for col in feature_cols
+            if np.issubdtype(df[col].dtype, np.datetime64)
+            or np.issubdtype(df[col].dtype, np.timedelta64)
+        ]
+
+    for col in feature_cols:
+        for lag in range(1, L + 1):
+            df[f"{col}_lag_{lag}"] = df[col].shift(lag)
+    return df
+
+
 def add_rolling_sum(df, columns, window=6):
     """
     Calculate rolling sum for specified columns in a pandas dataframe.
