@@ -9,7 +9,7 @@ import pandas as pd
 def add_directional_targets(
     panel: pd.DataFrame,
     horizons: tuple[int, ...] = (1, 3, 6, 12, 24),
-    theta: float = 0.02,
+    theta: float = 0.01,
     market_col: str = "market_slug",
     time_col: str = "timestamp",
     price_col: str = "price",
